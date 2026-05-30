@@ -1,0 +1,24 @@
+wait:
+  1:
+    time: 0 # ms
+    message:
+      - "&b抽奖中.."
+  2:
+    time: 300
+    message:
+      - "&b抽奖中..."
+  3:
+    time: 600
+    message:
+      - "&b抽奖中...."
+  4:
+    time: 900
+    message:
+      - "&b抽奖中....."
+
+total_time: 1200 # ms
+reward_msg: "&a恭喜获得{reward}"
+
+rewards:
+  - "100银币|rme add %player% bal 100|50%"
+  - "450银币|rme add %player% bal 450|50%"

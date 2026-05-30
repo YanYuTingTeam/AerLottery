@@ -1,0 +1,8 @@
+name: AerLottery
+version: 1.0
+main: com.aermini.aerlottery.AerLottery
+api-version: 1.13
+authors: [ AerMini ]
+commands:
+  aerlottery:
+    aliases: [aerlottry]
