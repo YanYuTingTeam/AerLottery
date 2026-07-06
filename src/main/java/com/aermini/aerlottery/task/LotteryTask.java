@@ -40,14 +40,16 @@ public class LotteryTask extends BukkitRunnable {
                             for (String msg : messages) {
                                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
                             }
-                            player.playSound(player.getLocation(), Sound.valueOf("CLICK"), 1.0f, 1.0f);
+                            try { player.playSound(player.getLocation(), Sound.valueOf("UI_BUTTON_CLICK"), 1.0f, 1.0f); }
+                            catch (IllegalArgumentException e) { player.playSound(player.getLocation(), Sound.valueOf("CLICK"), 1.0f, 1.0f); }
                         }
                     });
         }
 
         if (elapsedTicks >= (AerLottery.getInstance().getConfig().getInt("total_time") / 50)) {
             if (!hasPlayedFinalSound) {
-                player.playSound(player.getLocation(), Sound.valueOf("ANVIL_USE"), 1.0f, 1.0f);
+                try { player.playSound(player.getLocation(), Sound.valueOf("BLOCK_ANVIL_USE"), 1.0f, 1.0f); }
+                catch (IllegalArgumentException e) { player.playSound(player.getLocation(), Sound.valueOf("ANVIL_USE"), 1.0f, 1.0f); }
                 hasPlayedFinalSound = true;
             }
             this.cancel();
@@ -78,7 +80,8 @@ public class LotteryTask extends BukkitRunnable {
         String command = parts[1].replace("%player%", player.getName());
 
         Bukkit.getScheduler().runTask(AerLottery.getInstance(), () -> {
-            player.playSound(player.getLocation(), Sound.valueOf("ANVIL_USE"), 1.0f, 1.0f);
+            try { player.playSound(player.getLocation(), Sound.valueOf("BLOCK_ANVIL_USE"), 1.0f, 1.0f); }
+            catch (IllegalArgumentException e) { player.playSound(player.getLocation(), Sound.valueOf("ANVIL_USE"), 1.0f, 1.0f); }
             String rewardMsg = AerLottery.getInstance().getConfig().getString("reward_msg", "&a恭喜获得{reward}");
             rewardMsg = ChatColor.translateAlternateColorCodes('&', rewardMsg.replace("{reward}", rewardName));
             player.sendMessage(rewardMsg);
