@@ -40,16 +40,14 @@ public class LotteryTask extends BukkitRunnable {
                             for (String msg : messages) {
                                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
                             }
-                            try { player.playSound(player.getLocation(), Sound.valueOf("UI_BUTTON_CLICK"), 1.0f, 1.0f); }
-                            catch (IllegalArgumentException e) { player.playSound(player.getLocation(), Sound.valueOf("CLICK"), 1.0f, 1.0f); }
+                            playClickSound();
                         }
                     });
         }
 
         if (elapsedTicks >= (AerLottery.getInstance().getConfig().getInt("total_time") / 50)) {
             if (!hasPlayedFinalSound) {
-                try { player.playSound(player.getLocation(), Sound.valueOf("BLOCK_ANVIL_USE"), 1.0f, 1.0f); }
-                catch (IllegalArgumentException e) { player.playSound(player.getLocation(), Sound.valueOf("ANVIL_USE"), 1.0f, 1.0f); }
+                playAnvilSound();
                 hasPlayedFinalSound = true;
             }
             this.cancel();
@@ -58,6 +56,34 @@ public class LotteryTask extends BukkitRunnable {
             return;
         }
         elapsedTicks++;
+    }
+
+    private int getClientProtocolVersion() {
+        try {
+            Object handle = player.getClass().getMethod("getHandle").invoke(player);
+            Object connection = handle.getClass().getField("playerConnection").get(handle);
+            Object manager = connection.getClass().getField("networkManager").get(handle);
+            java.lang.reflect.Method getVer = manager.getClass().getMethod("getVersion");
+            return (int) getVer.invoke(manager);
+        } catch (Exception e) {
+            return 999;
+        }
+    }
+
+    private void playClickSound() {
+        if (getClientProtocolVersion() < 315) {
+            player.playSound(player.getLocation(), Sound.valueOf("CLICK"), 1.0f, 1.0f);
+        } else {
+            player.playSound(player.getLocation(), Sound.valueOf("UI_BUTTON_CLICK"), 1.0f, 1.0f);
+        }
+    }
+
+    private void playAnvilSound() {
+        if (getClientProtocolVersion() < 315) {
+            player.playSound(player.getLocation(), Sound.valueOf("ANVIL_USE"), 1.0f, 1.0f);
+        } else {
+            player.playSound(player.getLocation(), Sound.valueOf("BLOCK_ANVIL_USE"), 1.0f, 1.0f);
+        }
     }
 
     private void giveReward() {
@@ -80,8 +106,7 @@ public class LotteryTask extends BukkitRunnable {
         String command = parts[1].replace("%player%", player.getName());
 
         Bukkit.getScheduler().runTask(AerLottery.getInstance(), () -> {
-            try { player.playSound(player.getLocation(), Sound.valueOf("BLOCK_ANVIL_USE"), 1.0f, 1.0f); }
-            catch (IllegalArgumentException e) { player.playSound(player.getLocation(), Sound.valueOf("ANVIL_USE"), 1.0f, 1.0f); }
+            playAnvilSound();
             String rewardMsg = AerLottery.getInstance().getConfig().getString("reward_msg", "&a恭喜获得{reward}");
             rewardMsg = ChatColor.translateAlternateColorCodes('&', rewardMsg.replace("{reward}", rewardName));
             player.sendMessage(rewardMsg);
