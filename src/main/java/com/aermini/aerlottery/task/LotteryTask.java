@@ -62,7 +62,7 @@ public class LotteryTask extends BukkitRunnable {
         try {
             Object handle = player.getClass().getMethod("getHandle").invoke(player);
             Object connection = handle.getClass().getField("playerConnection").get(handle);
-            Object manager = connection.getClass().getField("networkManager").get(handle);
+            Object manager = connection.getClass().getField("networkManager").get(connection);
             java.lang.reflect.Method getVer = manager.getClass().getMethod("getVersion");
             return (int) getVer.invoke(manager);
         } catch (Exception e) {
@@ -72,17 +72,17 @@ public class LotteryTask extends BukkitRunnable {
 
     private void playClickSound() {
         if (getClientProtocolVersion() < 315) {
-            player.playSound(player.getLocation(), Sound.valueOf("CLICK"), 1.0f, 1.0f);
+            player.playSound(player.getLocation(), "random.click", 1.0f, 1.0f);
         } else {
-            player.playSound(player.getLocation(), Sound.valueOf("UI_BUTTON_CLICK"), 1.0f, 1.0f);
+            player.playSound(player.getLocation(), "ui.button.click", 1.0f, 1.0f);
         }
     }
 
     private void playAnvilSound() {
         if (getClientProtocolVersion() < 315) {
-            player.playSound(player.getLocation(), Sound.valueOf("ANVIL_USE"), 1.0f, 1.0f);
+            player.playSound(player.getLocation(), "random.anvil.use", 1.0f, 1.0f);
         } else {
-            player.playSound(player.getLocation(), Sound.valueOf("BLOCK_ANVIL_USE"), 1.0f, 1.0f);
+            player.playSound(player.getLocation(), "block.anvil.use", 1.0f, 1.0f);
         }
     }
 
